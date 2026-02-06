@@ -1,0 +1,8 @@
+{
+    "id": "bristol-odyssey",
+    "name": "Odyssey",
+    "version": "0.1.0",
+    "author": "Bristol/Move Anything",
+    "description": "ARP Odyssey emulation (duophonic)",
+    "capabilities": { "chainable": true, "component_type": "sound_generator" }
+}

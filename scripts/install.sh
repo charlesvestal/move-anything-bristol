@@ -9,16 +9,24 @@ MOVE_IP="${MOVE_IP:-move.local}"
 MOVE_USER="${MOVE_USER:-root}"
 MOVE_PATH="/data/UserData/move-anything/modules/sound_generators"
 
-# Modules to install
-MODULES=("bristol-mini" "bristol-juno")
+# Find all built modules dynamically
+if [ ! -d "$PROJECT_DIR/dist" ]; then
+    echo "Error: No dist directory found. Run ./scripts/build.sh first."
+    exit 1
+fi
 
-# Check if dist exists
-for MODULE_ID in "${MODULES[@]}"; do
-    if [ ! -d "$PROJECT_DIR/dist/$MODULE_ID" ]; then
-        echo "Error: Distribution for $MODULE_ID not found. Run ./scripts/build.sh first."
-        exit 1
+MODULES=()
+for d in "$PROJECT_DIR/dist"/bristol-*/; do
+    if [ -d "$d" ]; then
+        MODULE_ID=$(basename "$d")
+        MODULES+=("$MODULE_ID")
     fi
 done
+
+if [ ${#MODULES[@]} -eq 0 ]; then
+    echo "Error: No modules found in dist/. Run ./scripts/build.sh first."
+    exit 1
+fi
 
 echo "Installing Bristol modules to Move at $MOVE_IP..."
 

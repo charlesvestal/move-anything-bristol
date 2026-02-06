@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build Bristol modules for Move Anything (ARM64)
 #
-# Builds both bristol-mini and bristol-juno from the monorepo.
+# Builds all Bristol synth emulations from the monorepo.
 # Automatically uses Docker for cross-compilation if needed.
 set -e
 
@@ -43,73 +43,59 @@ cd "$REPO_ROOT"
 echo "=== Building Bristol Modules ==="
 echo "Cross prefix: $CROSS_PREFIX"
 
-# Create build directories
+# Create build directory
 mkdir -p build
-mkdir -p dist/bristol-mini/presets/mini
-mkdir -p dist/bristol-juno/presets/juno
 
-# ============================================
-# Build Bristol Mini (Minimoog emulation)
-# ============================================
+# Build shared bristol_mem_loader
 echo ""
-echo "=== Building Bristol Mini ==="
+echo "=== Building shared components ==="
 ${CROSS_PREFIX}gcc -g -O3 -c -fPIC \
     src/shared/bristol_mem_loader.c \
     -o build/bristol_mem_loader.o \
     -Isrc/shared
 
-${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
-    src/synths/mini/mini_engine.c \
-    src/synths/mini/mini_plugin.cpp \
-    build/bristol_mem_loader.o \
-    -o build/mini-dsp.so \
-    -Isrc/synths/mini \
-    -Isrc/shared \
-    -lm
+# Function to build a synth module
+build_synth() {
+    local id=$1
+    local name=$2
+    local preset_dir=$3
 
-# Package Bristol Mini
-echo "Packaging Bristol Mini..."
-cat src/synths/mini/module.json > dist/bristol-mini/module.json
-cat src/synths/mini/ui.js > dist/bristol-mini/ui.js
-cat build/mini-dsp.so > dist/bristol-mini/dsp.so
-chmod +x dist/bristol-mini/dsp.so
+    echo ""
+    echo "=== Building $name ==="
 
-# Copy Mini presets from Bristol source (if available)
-if [ -d presets/mini ]; then
-    echo "Copying Mini presets..."
-    for f in presets/mini/*.mem; do
-        [ -e "$f" ] && cat "$f" > "dist/bristol-mini/presets/mini/$(basename "$f")"
-    done
-fi
+    mkdir -p "dist/bristol-${id}/presets/${preset_dir}"
 
-# ============================================
-# Build Bristol Juno (Juno-style DCO synth)
-# ============================================
-echo ""
-echo "=== Building Bristol Juno ==="
-${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
-    src/synths/juno/juno_engine.c \
-    src/synths/juno/juno_plugin.cpp \
-    build/bristol_mem_loader.o \
-    -o build/juno-dsp.so \
-    -Isrc/synths/juno \
-    -Isrc/shared \
-    -lm
+    ${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
+        "src/synths/${id}/${id}_engine.c" \
+        "src/synths/${id}/${id}_plugin.cpp" \
+        build/bristol_mem_loader.o \
+        -o "build/${id}-dsp.so" \
+        "-Isrc/synths/${id}" \
+        -Isrc/shared \
+        -lm
 
-# Package Bristol Juno
-echo "Packaging Bristol Juno..."
-cat src/synths/juno/module.json > dist/bristol-juno/module.json
-cat src/synths/juno/ui.js > dist/bristol-juno/ui.js
-cat build/juno-dsp.so > dist/bristol-juno/dsp.so
-chmod +x dist/bristol-juno/dsp.so
+    echo "Packaging $name..."
+    cat "src/synths/${id}/module.json" > "dist/bristol-${id}/module.json"
+    cat "src/synths/${id}/ui.js" > "dist/bristol-${id}/ui.js"
+    cat "build/${id}-dsp.so" > "dist/bristol-${id}/dsp.so"
+    chmod +x "dist/bristol-${id}/dsp.so"
 
-# Copy Juno presets from Bristol source (if available)
-if [ -d presets/juno ]; then
-    echo "Copying Juno presets..."
-    for f in presets/juno/*.mem; do
-        [ -e "$f" ] && cat "$f" > "dist/bristol-juno/presets/juno/$(basename "$f")"
-    done
-fi
+    # Copy presets
+    if [ -d "presets/${preset_dir}" ]; then
+        echo "Copying ${name} presets..."
+        for f in "presets/${preset_dir}"/*.mem; do
+            [ -e "$f" ] && cat "$f" > "dist/bristol-${id}/presets/${preset_dir}/$(basename "$f")"
+        done
+    fi
+}
+
+# Build all synths
+build_synth "mini" "Bristol Mini" "mini"
+build_synth "juno" "Bristol Juno" "juno"
+build_synth "prophet" "Prophet-5" "prophet"
+build_synth "obx" "OB-X" "obx"
+build_synth "odyssey" "ARP Odyssey" "odyssey"
+build_synth "jupiter" "Jupiter-8" "jupiter"
 
 # ============================================
 # Create tarballs for release
@@ -117,19 +103,16 @@ fi
 echo ""
 echo "Creating tarballs..."
 cd dist
-tar -czvf bristol-mini-module.tar.gz bristol-mini/
-tar -czvf bristol-juno-module.tar.gz bristol-juno/
+for d in bristol-*/; do
+    name="${d%/}"
+    tar -czvf "${name}-module.tar.gz" "$name/"
+done
 cd ..
 
 echo ""
 echo "=== Build Complete ==="
 echo "Output:"
-echo "  dist/bristol-mini/"
-echo "  dist/bristol-juno/"
-echo ""
-echo "Tarballs:"
-echo "  dist/bristol-mini-module.tar.gz"
-echo "  dist/bristol-juno-module.tar.gz"
+ls -d dist/bristol-*/
 echo ""
 echo "To install on Move:"
 echo "  ./scripts/install.sh"

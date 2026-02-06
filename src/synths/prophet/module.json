@@ -1,0 +1,11 @@
+{
+    "id": "bristol-prophet",
+    "name": "Prophet-5",
+    "version": "0.1.0",
+    "author": "Bristol/Move Anything",
+    "description": "Sequential Circuits Prophet-5 emulation (5-voice poly)",
+    "capabilities": {
+        "chainable": true,
+        "component_type": "sound_generator"
+    }
+}
