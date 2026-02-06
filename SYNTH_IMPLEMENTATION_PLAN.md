@@ -4,7 +4,7 @@
 
 Port Bristol synthesizer emulations to Move Anything using the shared DSP components in `src/shared/bristol_common.h` and runtime .mem preset loading via `bristol_mem_loader.c`.
 
-## Completed (13 Synths)
+## Completed (16 Synths)
 
 | Synth | Type | Presets | Status |
 |-------|------|---------|--------|
@@ -21,10 +21,13 @@ Port Bristol synthesizer emulations to Move Anything using the shared DSP compon
 | Solina | String machine | 10 | ✅ Done |
 | Rhodes | Electric piano | 8 | ✅ Done |
 | Roadrunner | Electric piano | 6 | ✅ Done |
+| MemMoog | 6-voice poly | 9 | ✅ Done |
+| Bit-1 | Crumar DCO | 12 | ✅ Done |
+| Vox | Combo organ | 4 | ✅ Done |
 
 ## To Implement
 
-### Priority 2: More Synths
+### Remaining Synths
 
 | Synth | Brighton Source | Presets | Complexity | Notes |
 |-------|-----------------|---------|------------|-------|
@@ -32,21 +35,8 @@ Port Bristol synthesizer emulations to Move Anything using the shared DSP compon
 | Poly-800 | brightonPoly800.c | 4 | Medium | Digital-ish Korg |
 | Mono/Poly | brightonPoly.c | 1 | Medium | Korg mono/poly |
 | Sonic-6 | brightonSID.c? | 62 | Medium | Moog Sonic Six |
-| Memory Moog | brightonMemoryMoog.c | 9 | Hard | 6-voice, complex |
-
-### Priority 3: Keys & Organs
-
-| Synth | Brighton Source | Presets | Complexity | Notes |
-|-------|-----------------|---------|------------|-------|
 | Hammond B3 | brightonHammondB3.c | 23 | Hard | Drawbars, Leslie |
-| Vox Continental | brightonVox.c? | 4 | Medium | Combo organ |
-
-### Priority 4: Other
-
-| Synth | Brighton Source | Presets | Complexity | Notes |
-|-------|-----------------|---------|------------|-------|
 | Prophet-52 | brightonProphet52.c | 64 | Medium | Prophet variant |
-| Bit-1 | brightonBitOne.c | 12 | Medium | Crumar digital |
 | Trilogy | brightonTrilogy.c? | 8 | Medium | Crumar |
 | Stratus | brightonStratus.c? | 4 | Medium | Crumar |
 | MG-1 | brightonRealistic.c | 1 | Easy | Moog/Realistic budget |
@@ -86,32 +76,22 @@ For each synth:
 
 ```
 src/synths/
-  mini/       ✅
-  juno/       ✅
-  prophet/    ✅
-  obx/        ✅
-  obxa/       ✅
-  odyssey/    ✅
-  jupiter/    ✅
-  pro1/       ✅
-  axxe/       ✅
-  poly6/      ✅
-  solina/     ✅
-  rhodes/     ✅
-  roadrunner/ ✅
-
-presets/
-  mini/       # 62 presets
-  juno/       # 9 presets
-  prophet/    # 66 presets
-  obx/        # 21 presets
-  obxa/       # 13 presets
-  odyssey/    # 8 presets
-  jupiter/    # 8 presets
-  pro1/       # 15 presets
-  axxe/       # 2 presets
-  poly6/      # 14 presets
-  solina/     # 10 presets
-  rhodes/     # 8 presets
-  roadrunner/ # 6 presets
+  mini/       ✅  62 presets
+  juno/       ✅  9 presets
+  prophet/    ✅  66 presets
+  obx/        ✅  21 presets
+  obxa/       ✅  13 presets
+  odyssey/    ✅  8 presets
+  jupiter/    ✅  8 presets
+  pro1/       ✅  15 presets
+  axxe/       ✅  2 presets
+  poly6/      ✅  14 presets
+  solina/     ✅  10 presets
+  rhodes/     ✅  8 presets
+  roadrunner/ ✅  6 presets
+  memmoog/    ✅  9 presets
+  bit1/       ✅  12 presets
+  vox/        ✅  4 presets
 ```
+
+**Total: 267 presets across 16 synths**

@@ -1,0 +1,8 @@
+{
+    "id": "bristol-vox",
+    "name": "Vox",
+    "version": "0.1.0",
+    "author": "Bristol/Move Anything",
+    "description": "Vox Continental Combo Organ emulation",
+    "capabilities": { "chainable": true, "component_type": "sound_generator" }
+}

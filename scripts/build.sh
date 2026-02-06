@@ -103,6 +103,9 @@ build_synth "solina" "Solina" "solina"
 build_synth "rhodes" "Rhodes" "rhodes"
 build_synth "obxa" "OB-Xa" "obxa"
 build_synth "roadrunner" "Roadrunner" "roadrunner"
+build_synth "memmoog" "MemMoog" "memmoog"
+build_synth "bit1" "Bit-1" "bit1"
+build_synth "vox" "Vox" "vox"
 
 # ============================================
 # Create tarballs for release
