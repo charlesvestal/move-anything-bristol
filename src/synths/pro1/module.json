@@ -1,6 +1,7 @@
 {
     "id": "bristol-pro1",
-    "name": "Pro-One",
+    "name": "BR Pro-1",
+    "abbrev": "P1",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Sequential Pro-One emulation (monophonic)",

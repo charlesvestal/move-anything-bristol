@@ -1,6 +1,7 @@
 {
     "id": "bristol-bit1",
-    "name": "Bit-1",
+    "name": "BR Bit-1",
+    "abbrev": "B1",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Crumar Bit-1 emulation (6-voice DCO)",

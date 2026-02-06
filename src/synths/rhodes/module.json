@@ -1,6 +1,7 @@
 {
     "id": "bristol-rhodes",
-    "name": "Rhodes",
+    "name": "BR Rhodes",
+    "abbrev": "RH",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Rhodes Electric Piano emulation",

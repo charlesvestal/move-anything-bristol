@@ -1,7 +1,7 @@
 {
     "id": "bristol-mini",
-    "name": "Bristol Mini",
-    "abbrev": "BM",
+    "name": "BR Mini",
+    "abbrev": "MI",
     "version": "0.1.0",
     "description": "Minimoog emulation - 3 oscillators, Moog ladder filter, dual ADSR",
     "author": "Bristol Synthesizer (Nick Copeland), ported by Move Anything",

@@ -1,6 +1,7 @@
 {
     "id": "bristol-obx",
-    "name": "OB-X",
+    "name": "BR OB-X",
+    "abbrev": "OX",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Oberheim OB-X emulation (8-voice poly)",

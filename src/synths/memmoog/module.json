@@ -1,6 +1,7 @@
 {
     "id": "bristol-memmoog",
-    "name": "MemMoog",
+    "name": "BR MemMoog",
+    "abbrev": "MM",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Moog MemoryMoog emulation (6-voice poly)",

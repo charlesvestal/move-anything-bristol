@@ -1,6 +1,7 @@
 {
     "id": "bristol-odyssey",
-    "name": "Odyssey",
+    "name": "BR Odyssey",
+    "abbrev": "OD",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "ARP Odyssey emulation (duophonic)",

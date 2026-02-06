@@ -1,6 +1,7 @@
 {
     "id": "bristol-obxa",
-    "name": "OB-Xa",
+    "name": "BR OB-Xa",
+    "abbrev": "XA",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Oberheim OB-Xa emulation (8-voice poly)",

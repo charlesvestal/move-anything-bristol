@@ -1,6 +1,7 @@
 {
     "id": "bristol-vox",
-    "name": "Vox",
+    "name": "BR Vox",
+    "abbrev": "VX",
     "version": "0.1.0",
     "author": "Bristol/Move Anything",
     "description": "Vox Continental Combo Organ emulation",
