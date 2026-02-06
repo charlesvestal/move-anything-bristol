@@ -1,0 +1,12 @@
+{
+    "id": "bristol",
+    "name": "Bristol Mini",
+    "version": "0.1.0",
+    "description": "Minimoog emulation based on Bristol synthesizer - 3 oscillators, Moog ladder filter, dual ADSR",
+    "author": "Bristol Synthesizer (Nick Copeland), ported by Move Anything",
+    "license": "GPL-3.0",
+    "capabilities": {
+        "chainable": true,
+        "component_type": "sound_generator"
+    }
+}
