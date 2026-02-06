@@ -96,6 +96,13 @@ build_synth "prophet" "Prophet-5" "prophet"
 build_synth "obx" "OB-X" "obx"
 build_synth "odyssey" "ARP Odyssey" "odyssey"
 build_synth "jupiter" "Jupiter-8" "jupiter"
+build_synth "pro1" "Pro-One" "pro1"
+build_synth "axxe" "ARP Axxe" "axxe"
+build_synth "poly6" "Poly-6" "poly6"
+build_synth "solina" "Solina" "solina"
+build_synth "rhodes" "Rhodes" "rhodes"
+build_synth "obxa" "OB-Xa" "obxa"
+build_synth "roadrunner" "Roadrunner" "roadrunner"
 
 # ============================================
 # Create tarballs for release
