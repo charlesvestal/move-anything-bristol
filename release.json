@@ -1,0 +1,16 @@
+{
+  "modules": {
+    "bristol-mini": {
+      "version": "0.1.0",
+      "download_url": "https://github.com/charlesvestal/move-anything-bristol/releases/latest/download/bristol-mini-module.tar.gz",
+      "name": "Bristol Mini",
+      "description": "Minimoog emulation - 3 oscillators, Moog ladder filter, dual ADSR"
+    },
+    "bristol-juno": {
+      "version": "0.1.0",
+      "download_url": "https://github.com/charlesvestal/move-anything-bristol/releases/latest/download/bristol-juno-module.tar.gz",
+      "name": "Bristol Juno",
+      "description": "Juno-style DCO synth with BBD chorus, inspired by Roland Juno-60/106"
+    }
+  }
+}

@@ -413,11 +413,63 @@ static int juno_get_param(void *instance, const char *key, char *buf, int buf_le
     } else if (strcmp(key, "octave_transpose") == 0) {
         return snprintf(buf, buf_len, "%d", inst->octave_transpose);
     } else if (strcmp(key, "gain") == 0) {
-        return snprintf(buf, buf_len, "%.2f", inst->gain);
+        return snprintf(buf, buf_len, "%.3f", inst->gain);
+    /* Filter parameters */
     } else if (strcmp(key, "filter_cutoff") == 0) {
         return snprintf(buf, buf_len, "%.3f", inst->engine.filter.cutoff);
     } else if (strcmp(key, "filter_resonance") == 0) {
         return snprintf(buf, buf_len, "%.3f", inst->engine.filter.resonance);
+    } else if (strcmp(key, "filter_env_amount") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter.env_amount);
+    } else if (strcmp(key, "filter_keytrack") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter.key_track);
+    /* Amp envelope */
+    } else if (strcmp(key, "amp_attack") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.amp_env.attack);
+    } else if (strcmp(key, "amp_decay") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.amp_env.decay);
+    } else if (strcmp(key, "amp_sustain") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.amp_env.sustain);
+    } else if (strcmp(key, "amp_release") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.amp_env.release);
+    /* Filter envelope */
+    } else if (strcmp(key, "filter_attack") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter_env.attack);
+    } else if (strcmp(key, "filter_decay") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter_env.decay);
+    } else if (strcmp(key, "filter_sustain") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter_env.sustain);
+    } else if (strcmp(key, "filter_release") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.filter_env.release);
+    /* LFO */
+    } else if (strcmp(key, "lfo_rate") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.lfo.rate);
+    } else if (strcmp(key, "lfo_to_filter") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.lfo_to_filter);
+    } else if (strcmp(key, "lfo_to_dco") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.lfo_to_dco);
+    /* DCO */
+    } else if (strcmp(key, "saw_enabled") == 0) {
+        return snprintf(buf, buf_len, "%d", inst->engine.saw_enabled);
+    } else if (strcmp(key, "pulse_enabled") == 0) {
+        return snprintf(buf, buf_len, "%d", inst->engine.pulse_enabled);
+    } else if (strcmp(key, "sub_enabled") == 0) {
+        return snprintf(buf, buf_len, "%d", inst->engine.sub_enabled);
+    } else if (strcmp(key, "sub_level") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.sub_level);
+    } else if (strcmp(key, "pulse_width") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.pulse_width);
+    } else if (strcmp(key, "pw_lfo_amount") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.pw_lfo_amount);
+    } else if (strcmp(key, "noise_level") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.noise.level);
+    /* Other */
+    } else if (strcmp(key, "glide") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.glide);
+    } else if (strcmp(key, "chorus_mode") == 0) {
+        return snprintf(buf, buf_len, "%d", inst->engine.chorus.mode);
+    } else if (strcmp(key, "master_volume") == 0) {
+        return snprintf(buf, buf_len, "%.3f", inst->engine.master_volume);
     } else if (strcmp(key, "ui_hierarchy") == 0) {
         return snprintf(buf, buf_len, R"({
   "modes": null,
