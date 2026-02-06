@@ -111,7 +111,10 @@ void roadrunner_engine_render(roadrunner_engine_t *e, float *output, int frames)
 
             /* Envelope */
             float aenv = env_process(&v->amp_env, v->active, sr);
-            if (!v->active && v->amp_env.state == ENV_IDLE) continue;
+            if (v->amp_env.state == ENV_IDLE) {
+                v->active = 0;
+                continue;
+            }
 
             output[i] += sample * aenv * v->velocity * e->master_volume;
         }

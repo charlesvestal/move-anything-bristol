@@ -134,7 +134,10 @@ void memmoog_engine_render(memmoog_engine_t *e, float *output, int frames) {
 
             float fenv = env_process(&v->filter_env, v->active, sr);
             float aenv = env_process(&v->amp_env, v->active, sr);
-            if (!v->active && v->amp_env.state == ENV_IDLE) continue;
+            if (v->amp_env.state == ENV_IDLE) {
+                v->active = 0;
+                continue;
+            }
 
             float filt_lfo = lfo_val * e->lfo_to_filter * 0.2f;
             float filtered = filter_process(&v->filter, mix, fenv, filt_lfo, base_freq, sr);

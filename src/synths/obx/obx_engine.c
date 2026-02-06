@@ -196,7 +196,11 @@ void obx_engine_render(obx_engine_t *engine, float *output, int frames) {
             float fenv = env_process(&v->filter_env, v->active, sr);
             float aenv = env_process(&v->amp_env, v->active, sr);
 
-            if (!v->active && v->amp_env.state == ENV_IDLE) continue;
+            /* Deactivate voice when envelope completes */
+            if (v->amp_env.state == ENV_IDLE) {
+                v->active = 0;
+                continue;
+            }
 
             /* Filter with LFO mod */
             float filt_lfo = engine->lfo_fm_filter ? lfo_val * 0.2f : 0.0f;

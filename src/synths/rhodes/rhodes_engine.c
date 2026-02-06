@@ -114,7 +114,10 @@ void rhodes_engine_render(rhodes_engine_t *e, float *output, int frames) {
 
             /* Envelope */
             float aenv = env_process(&v->amp_env, v->active, sr);
-            if (!v->active && v->amp_env.state == ENV_IDLE) continue;
+            if (v->amp_env.state == ENV_IDLE) {
+                v->active = 0;
+                continue;
+            }
 
             /* Tremolo */
             float trem = 1.0f;
