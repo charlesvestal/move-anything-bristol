@@ -8,7 +8,7 @@ MODULE_ID="bristol"
 # Default Move IP
 MOVE_IP="${MOVE_IP:-move.local}"
 MOVE_USER="${MOVE_USER:-root}"
-MOVE_PATH="/data/UserData/move-anything/modules"
+MOVE_PATH="/data/UserData/move-anything/modules/sound_generators"
 
 # Check if dist exists
 if [ ! -d "$PROJECT_DIR/dist/$MODULE_ID" ]; then

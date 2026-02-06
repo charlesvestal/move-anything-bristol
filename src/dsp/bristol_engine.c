@@ -252,12 +252,19 @@ static void filter_init(bristol_filter_t *f) {
     f->resonance = 0.0f;
     f->env_amount = 0.5f;
     f->key_track = 0.0f;
+    f->cutoff_smooth = 0.5f;
+    f->resonance_smooth = 0.0f;
 }
 
 static float filter_process(bristol_filter_t *f, float input, float env_mod,
                            float lfo_mod, float key_freq, float sample_rate) {
-    /* Calculate cutoff frequency */
-    float cutoff_hz = 20.0f + f->cutoff * f->cutoff * 20000.0f;
+    /* Per-sample parameter smoothing (very fast, ~0.5ms time constant) */
+    const float smooth_coeff = 0.005f;
+    f->cutoff_smooth += (f->cutoff - f->cutoff_smooth) * smooth_coeff;
+    f->resonance_smooth += (f->resonance - f->resonance_smooth) * smooth_coeff;
+
+    /* Calculate cutoff frequency using smoothed value */
+    float cutoff_hz = 20.0f + f->cutoff_smooth * f->cutoff_smooth * 20000.0f;
 
     /* Apply envelope modulation */
     cutoff_hz += env_mod * f->env_amount * 10000.0f;
@@ -286,8 +293,8 @@ static float filter_process(bristol_filter_t *f, float input, float env_mod,
     /* Tuned coefficient */
     float g = 1.0f - expf(-2.0f * M_PI * fcr * fc);
 
-    /* Resonance (0-1 maps to 0-4 for self-oscillation) */
-    float res = f->resonance * 4.0f;
+    /* Resonance (0-1 maps to 0-4 for self-oscillation) - use smoothed value */
+    float res = f->resonance_smooth * 4.0f;
 
     /* Thermal voltage scaling */
     float thermal = 0.000025f;

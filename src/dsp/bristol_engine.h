@@ -74,10 +74,14 @@ typedef struct {
     float delay;
 
     /* Parameters */
-    float cutoff;       /* 0-1 normalized */
+    float cutoff;       /* 0-1 normalized (target) */
     float resonance;    /* 0-1 (self-oscillation at ~0.95+) */
     float env_amount;   /* Filter envelope depth */
     float key_track;    /* Keyboard tracking amount */
+
+    /* Per-sample smoothed values */
+    float cutoff_smooth;
+    float resonance_smooth;
 } bristol_filter_t;
 
 /* LFO */

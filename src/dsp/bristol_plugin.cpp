@@ -17,7 +17,15 @@ extern "C" {
 extern "C" {
 
 typedef struct host_api_v1 {
+    uint32_t api_version;
+    int sample_rate;
+    int frames_per_block;
+    uint8_t *mapped_memory;
+    int audio_out_offset;
+    int audio_in_offset;
     void (*log)(const char *msg);
+    int (*midi_send_internal)(const uint8_t *msg, int len);
+    int (*midi_send_external)(const uint8_t *msg, int len);
 } host_api_v1_t;
 
 typedef struct plugin_api_v2 {
@@ -27,6 +35,7 @@ typedef struct plugin_api_v2 {
     void (*on_midi)(void *instance, const uint8_t *msg, int len, int source);
     void (*set_param)(void *instance, const char *key, const char *val);
     int (*get_param)(void *instance, const char *key, char *buf, int buf_len);
+    int (*get_error)(void *instance, char *buf, int buf_len);
     void (*render_block)(void *instance, int16_t *out_lr, int frames);
 } plugin_api_v2_t;
 
@@ -278,22 +287,27 @@ static void apply_preset(BristolInstance *inst, int idx) {
  * ======================================================================== */
 
 static void* bristol_create(const char *module_dir, const char *json_defaults) {
-    BristolInstance *inst = new BristolInstance();
+    (void)module_dir;
+    (void)json_defaults;
+
+    BristolInstance *inst = (BristolInstance*)calloc(1, sizeof(BristolInstance));
+    if (!inst) return NULL;
+
     bristol_engine_init(&inst->engine);
     inst->current_preset = 0;
     inst->octave_transpose = 0;
     inst->gain = 1.0f;
 
-    /* Apply first preset */
     apply_preset(inst, 0);
 
-    plugin_log("[bristol] Created instance");
+    plugin_log("[bristol] Instance created");
     return inst;
 }
 
 static void bristol_destroy(void *instance) {
     BristolInstance *inst = (BristolInstance *)instance;
-    delete inst;
+    if (!inst) return;
+    free(inst);
     plugin_log("[bristol] Destroyed instance");
 }
 
@@ -527,20 +541,37 @@ static int bristol_get_param(void *instance, const char *key, char *buf, int buf
     return 0;
 }
 
+static int bristol_get_error(void *instance, char *buf, int buf_len) {
+    (void)instance;
+    (void)buf;
+    (void)buf_len;
+    return 0;  /* No error */
+}
+
 static void bristol_render(void *instance, int16_t *out_lr, int frames) {
     BristolInstance *inst = (BristolInstance *)instance;
+    if (!inst) {
+        memset(out_lr, 0, frames * 4);
+        return;
+    }
 
-    float mono_buf[BRISTOL_MAX_RENDER];
-    int to_render = frames > BRISTOL_MAX_RENDER ? BRISTOL_MAX_RENDER : frames;
+    float mono_buf[256];
+    if (frames > 256) frames = 256;
 
-    bristol_engine_render(&inst->engine, mono_buf, to_render);
+    bristol_engine_render(&inst->engine, mono_buf, frames);
 
     /* Convert to stereo int16 */
-    float gain = inst->gain * 32767.0f;
-    for (int i = 0; i < to_render; i++) {
-        int16_t sample = (int16_t)(mono_buf[i] * gain);
-        out_lr[i * 2] = sample;
-        out_lr[i * 2 + 1] = sample;
+    float gain = inst->gain;
+    for (int i = 0; i < frames; i++) {
+        float sample = mono_buf[i] * gain;
+
+        /* Clamp */
+        int32_t s = (int32_t)(sample * 32767.0f);
+        if (s > 32767) s = 32767;
+        if (s < -32768) s = -32768;
+
+        out_lr[i * 2] = (int16_t)s;
+        out_lr[i * 2 + 1] = (int16_t)s;
     }
 }
 
@@ -555,6 +586,7 @@ static plugin_api_v2_t g_api = {
     .on_midi = bristol_on_midi,
     .set_param = bristol_set_param,
     .get_param = bristol_get_param,
+    .get_error = bristol_get_error,
     .render_block = bristol_render
 };
 

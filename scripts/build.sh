@@ -1,85 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Build Bristol module for Move Anything (ARM64)
+#
+# Automatically uses Docker for cross-compilation if needed.
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-BUILD_DIR="$PROJECT_DIR/build"
-DIST_DIR="$PROJECT_DIR/dist"
-MODULE_ID="bristol"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+IMAGE_NAME="bristol-builder"
 
-cd "$PROJECT_DIR"
+# Check if we need Docker
+if [ -z "$CROSS_PREFIX" ] && [ ! -f "/.dockerenv" ]; then
+    echo "=== Bristol Module Build (via Docker) ==="
+    echo ""
 
-# Detect if we need Docker for cross-compilation
-if [ -z "$CROSS_PREFIX" ]; then
-    # Check if we're on ARM64 Linux (native build possible)
-    if [ "$(uname -m)" = "aarch64" ] && [ "$(uname -s)" = "Linux" ]; then
-        echo "Building natively on ARM64 Linux..."
-        CROSS_PREFIX=""
-    else
-        echo "Cross-compiling via Docker..."
-
-        # Build Docker image if needed
-        if ! docker images | grep -q "bristol-builder"; then
-            echo "Building Docker image..."
-            docker build -t bristol-builder -f scripts/Dockerfile .
-        fi
-
-        # Run build in Docker
-        docker run --rm -v "$PROJECT_DIR:/build" -w /build bristol-builder ./scripts/build.sh
-        exit $?
+    # Build Docker image if needed
+    if ! docker image inspect "$IMAGE_NAME" &>/dev/null; then
+        echo "Building Docker image (first time only)..."
+        docker build -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$REPO_ROOT"
+        echo ""
     fi
+
+    # Run build inside container
+    echo "Running build..."
+    docker run --rm \
+        -v "$REPO_ROOT:/build" \
+        -u "$(id -u):$(id -g)" \
+        -w /build \
+        "$IMAGE_NAME" \
+        ./scripts/build.sh
+
+    echo ""
+    echo "=== Done ==="
+    exit 0
 fi
 
-# Create build directory
-mkdir -p "$BUILD_DIR"
+# === Actual build (runs in Docker or with cross-compiler) ===
+CROSS_PREFIX="${CROSS_PREFIX:-aarch64-linux-gnu-}"
 
-# Compiler settings
-CC="${CROSS_PREFIX}gcc"
-CXX="${CROSS_PREFIX}g++"
-CFLAGS="-O3 -fPIC -Wall -I$PROJECT_DIR/src/dsp"
-CXXFLAGS="-O3 -fPIC -Wall -std=c++17 -I$PROJECT_DIR/src/dsp"
-LDFLAGS="-shared -lm"
+cd "$REPO_ROOT"
 
-echo "Compiling Bristol engine..."
-$CC $CFLAGS -c src/dsp/bristol_engine.c -o "$BUILD_DIR/bristol_engine.o"
+echo "=== Building Bristol Module ==="
+echo "Cross prefix: $CROSS_PREFIX"
 
-echo "Compiling Bristol plugin..."
-$CXX $CXXFLAGS -c src/dsp/bristol_plugin.cpp -o "$BUILD_DIR/bristol_plugin.o"
+# Create build directories
+mkdir -p build
+mkdir -p dist/bristol
 
-echo "Linking dsp.so..."
-$CXX $LDFLAGS "$BUILD_DIR/bristol_engine.o" "$BUILD_DIR/bristol_plugin.o" -o "$BUILD_DIR/dsp.so"
+# Compile DSP plugin (single g++ command like OB-Xd)
+echo "Compiling DSP plugin..."
+${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
+    src/dsp/bristol_engine.c \
+    src/dsp/bristol_plugin.cpp \
+    -o build/dsp.so \
+    -Isrc/dsp \
+    -lm
 
-# Create distribution directory
-echo "Creating distribution package..."
-rm -rf "$DIST_DIR"
-mkdir -p "$DIST_DIR/$MODULE_ID"
-
-# Copy files
-cp "$BUILD_DIR/dsp.so" "$DIST_DIR/$MODULE_ID/"
-cp src/module.json "$DIST_DIR/$MODULE_ID/"
-
-# Create UI file (minimal for chain integration)
-cat > "$DIST_DIR/$MODULE_ID/ui.js" << 'EOF'
-// Bristol Mini - Minimoog emulation
-// UI handled by chain host shadow UI
-
-globalThis.init = function() {
-    return true;
-};
-
-globalThis.tick = function() {
-    return true;
-};
-EOF
+# Copy files to dist
+echo "Packaging..."
+cat src/module.json > dist/bristol/module.json
+cat src/ui.js > dist/bristol/ui.js
+cat build/dsp.so > dist/bristol/dsp.so
+chmod +x dist/bristol/dsp.so
 
 # Create tarball for release
-echo "Creating release tarball..."
-cd "$DIST_DIR"
-tar -czvf "${MODULE_ID}-module.tar.gz" "$MODULE_ID/"
-cd "$PROJECT_DIR"
+cd dist
+tar -czvf bristol-module.tar.gz bristol/
+cd ..
 
 echo ""
-echo "Build complete!"
-echo "  DSP plugin: $BUILD_DIR/dsp.so"
-echo "  Distribution: $DIST_DIR/$MODULE_ID/"
-echo "  Release tarball: $DIST_DIR/${MODULE_ID}-module.tar.gz"
+echo "=== Build Complete ==="
+echo "Output: dist/bristol/"
+echo "Tarball: dist/bristol-module.tar.gz"
+echo ""
+echo "To install on Move:"
+echo "  ./scripts/install.sh"
