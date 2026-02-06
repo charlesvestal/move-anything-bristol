@@ -1,9 +1,0 @@
-{
-    "id": "bristol-poly6",
-    "name": "BR Poly-6",
-    "abbrev": "P6",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "Korg Poly-6 emulation (6-voice poly)",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

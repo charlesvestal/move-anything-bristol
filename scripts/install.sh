@@ -28,7 +28,7 @@ if [ ${#MODULES[@]} -eq 0 ]; then
     exit 1
 fi
 
-echo "Installing Bristol modules to Move at $MOVE_IP..."
+echo "Installing Bristol Mini to Move at $MOVE_IP..."
 
 for MODULE_ID in "${MODULES[@]}"; do
     echo ""
@@ -51,4 +51,4 @@ for MODULE_ID in "${MODULES[@]}"; do
     echo "  - $MODULE_ID"
 done
 echo ""
-echo "Restart Move Anything or rescan modules to use Bristol synths."
+echo "Restart Move Anything or rescan modules to use Bristol Mini."

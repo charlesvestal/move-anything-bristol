@@ -1,9 +1,0 @@
-{
-    "id": "bristol-axxe",
-    "name": "BR Axxe",
-    "abbrev": "AX",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "ARP Axxe emulation (monophonic)",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "bristol-memmoog",
-    "name": "BR MemMoog",
-    "abbrev": "MM",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "Moog MemoryMoog emulation (6-voice poly)",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

@@ -1,9 +1,0 @@
-{
-    "id": "bristol-solina",
-    "name": "BR Solina",
-    "abbrev": "SO",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "Solina String Ensemble emulation",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

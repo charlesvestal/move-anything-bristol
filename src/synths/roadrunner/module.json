@@ -1,9 +1,0 @@
-{
-    "id": "bristol-roadrunner",
-    "name": "BR Roadrunner",
-    "abbrev": "RR",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "Crumar Roadrunner Electric Piano emulation",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

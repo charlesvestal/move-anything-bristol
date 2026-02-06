@@ -196,35 +196,32 @@ static inline float osc_generate(bristol_osc_t *osc, float freq, float sample_ra
 }
 
 /* ========================================================================
- * ADSR Envelope
+ * ADSR Envelope (Bristol-style multiplier-based)
+ *
+ * Bristol uses a multiplier-based approach:
+ * - Attack: linear ramp with rate = 12.0 / (sr * 0.0005 + duration * sr * param³)
+ * - Decay/Release: multiplier = 1/pow(13.0, 1.0/(2.0 + param³ * sr * duration))
+ * - Sustain: direct 0-1 value
+ *
+ * The 'duration' parameter sets overall time range (default ~10 seconds max)
  * ======================================================================== */
+
+#define BRISTOL_ENV_DURATION 1.0f   /* Envelope time scale factor */
 
 typedef struct {
     bristol_env_state_t state;
-    float level;
-    float attack_level;     /* Level at attack start (for retrigger) */
-    float release_level;    /* Level at release start */
-    double phase;
+    float cgain;            /* Current gain (Bristol uses 1.0 to BRISTOL_VPO range) */
 
-    /* Parameters (0-1 normalized) */
+    /* Parameters (0-1 normalized from preset) */
     float attack;
     float decay;
     float sustain;
     float release;
 } bristol_env_t;
 
-static inline float env_time_to_samples(float param, float sample_rate) {
-    float time_ms = 1.0f + expf(param * 6.9f) * 1.0f;
-    if (param > 0.9f) time_ms = 1.0f + expf(param * 9.2f);
-    return time_ms * sample_rate / 1000.0f;
-}
-
 static inline void env_init(bristol_env_t *env) {
     env->state = ENV_IDLE;
-    env->level = 0.0f;
-    env->attack_level = 0.0f;
-    env->release_level = 0.0f;
-    env->phase = 0.0;
+    env->cgain = 0.0f;
     env->attack = 0.01f;
     env->decay = 0.3f;
     env->sustain = 0.7f;
@@ -232,66 +229,66 @@ static inline void env_init(bristol_env_t *env) {
 }
 
 static inline void env_gate_on(bristol_env_t *env) {
-    env->attack_level = env->level;
     env->state = ENV_ATTACK;
-    env->phase = 0.0;
+    /* Don't reset cgain - allows retriggering from current level */
 }
 
 static inline void env_gate_off(bristol_env_t *env) {
     if (env->state != ENV_IDLE) {
-        env->release_level = env->level;
         env->state = ENV_RELEASE;
-        env->phase = 0.0;
     }
 }
 
 static inline float env_process(bristol_env_t *env, int gate, float sample_rate) {
-    float attack_samples = env_time_to_samples(env->attack, sample_rate);
-    float decay_samples = env_time_to_samples(env->decay, sample_rate);
-    float release_samples = env_time_to_samples(env->release, sample_rate);
+    float duration = BRISTOL_ENV_DURATION;
+    float param3;
+    float multiplier;
+    float attack_rate;
 
     switch (env->state) {
         case ENV_IDLE:
-            env->level = 0.0f;
+            env->cgain = 0.0f;
             break;
 
         case ENV_ATTACK:
-            if (attack_samples < 1.0f) attack_samples = 1.0f;
-            env->level = env->attack_level + (1.0f - env->attack_level) * (float)(env->phase / attack_samples);
-            env->phase += 1.0;
-            if (env->phase >= attack_samples) {
-                env->level = 1.0f;
+            /* Bristol linear attack: rate = 12.0 / (sr * 0.0005 + duration * sr * param³) */
+            param3 = env->attack * env->attack * env->attack;
+            attack_rate = 1.0f / (sample_rate * 0.0005f + duration * sample_rate * param3);
+            env->cgain += attack_rate;
+            if (env->cgain >= 1.0f) {
+                env->cgain = 1.0f;
                 env->state = ENV_DECAY;
-                env->phase = 0.0;
             }
             break;
 
         case ENV_DECAY:
-            if (decay_samples < 1.0f) decay_samples = 1.0f;
-            env->level = env->sustain + (1.0f - env->sustain) * (1.0f - (float)(env->phase / decay_samples));
-            env->phase += 1.0;
-            if (env->phase >= decay_samples) {
-                env->level = env->sustain;
+            /* Bristol decay: multiplier = 1/pow(13.0, 1.0/(2.0 + param³ * sr * duration)) */
+            param3 = env->decay * env->decay * env->decay;
+            multiplier = 1.0f / powf(13.0f, 1.0f / (2.0f + param3 * sample_rate * duration));
+            env->cgain *= multiplier;
+            if (env->cgain <= env->sustain) {
+                env->cgain = env->sustain;
                 env->state = ENV_SUSTAIN;
             }
             break;
 
         case ENV_SUSTAIN:
-            env->level = env->sustain;
+            env->cgain = env->sustain;
             break;
 
         case ENV_RELEASE:
-            if (release_samples < 1.0f) release_samples = 1.0f;
-            env->level = env->release_level * (1.0f - (float)(env->phase / release_samples));
-            env->phase += 1.0;
-            if (env->phase >= release_samples || env->level <= 0.0001f) {
-                env->level = 0.0f;
+            /* Bristol release: same multiplier formula as decay */
+            param3 = env->release * env->release * env->release;
+            multiplier = 1.0f / powf(13.0f, 1.0f / (2.0f + param3 * sample_rate * duration));
+            env->cgain *= multiplier;
+            if (env->cgain <= 0.001f) {
+                env->cgain = 0.0f;
                 env->state = ENV_IDLE;
             }
             break;
     }
 
-    return env->level;
+    return env->cgain;
 }
 
 /* ========================================================================

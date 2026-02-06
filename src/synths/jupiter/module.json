@@ -1,9 +1,0 @@
-{
-    "id": "bristol-jupiter",
-    "name": "BR Jupiter",
-    "abbrev": "J8",
-    "version": "0.1.0",
-    "author": "Bristol/Move Anything",
-    "description": "Roland Jupiter-8 emulation (8-voice poly)",
-    "capabilities": { "chainable": true, "component_type": "sound_generator" }
-}

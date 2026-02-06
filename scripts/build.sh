@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# Build Bristol modules for Move Anything (ARM64)
-#
-# Builds all Bristol synth emulations from the monorepo.
-# Automatically uses Docker for cross-compilation if needed.
+# Build Bristol Mini module for Move Anything (ARM64)
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -11,7 +8,7 @@ IMAGE_NAME="bristol-builder"
 
 # Check if we need Docker
 if [ -z "$CROSS_PREFIX" ] && [ ! -f "/.dockerenv" ]; then
-    echo "=== Bristol Modules Build (via Docker) ==="
+    echo "=== Bristol Mini Build (via Docker) ==="
     echo ""
 
     # Build Docker image if needed
@@ -40,11 +37,12 @@ CROSS_PREFIX="${CROSS_PREFIX:-aarch64-linux-gnu-}"
 
 cd "$REPO_ROOT"
 
-echo "=== Building Bristol Modules ==="
+echo "=== Building Bristol Mini ==="
 echo "Cross prefix: $CROSS_PREFIX"
 
-# Create build directory
+# Create directories
 mkdir -p build
+mkdir -p "dist/bristol-mini/presets/mini"
 
 # Build shared bristol_mem_loader
 echo ""
@@ -54,75 +52,41 @@ ${CROSS_PREFIX}gcc -g -O3 -c -fPIC \
     -o build/bristol_mem_loader.o \
     -Isrc/shared
 
-# Function to build a synth module
-build_synth() {
-    local id=$1
-    local name=$2
-    local preset_dir=$3
-
-    echo ""
-    echo "=== Building $name ==="
-
-    mkdir -p "dist/bristol-${id}/presets/${preset_dir}"
-
-    ${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
-        "src/synths/${id}/${id}_engine.c" \
-        "src/synths/${id}/${id}_plugin.cpp" \
-        build/bristol_mem_loader.o \
-        -o "build/${id}-dsp.so" \
-        "-Isrc/synths/${id}" \
-        -Isrc/shared \
-        -lm
-
-    echo "Packaging $name..."
-    cat "src/synths/${id}/module.json" > "dist/bristol-${id}/module.json"
-    cat "src/synths/${id}/ui.js" > "dist/bristol-${id}/ui.js"
-    cat "build/${id}-dsp.so" > "dist/bristol-${id}/dsp.so"
-    chmod +x "dist/bristol-${id}/dsp.so"
-
-    # Copy presets
-    if [ -d "presets/${preset_dir}" ]; then
-        echo "Copying ${name} presets..."
-        for f in "presets/${preset_dir}"/*.mem; do
-            [ -e "$f" ] && cat "$f" > "dist/bristol-${id}/presets/${preset_dir}/$(basename "$f")"
-        done
-    fi
-}
-
-# Build all synths
-build_synth "mini" "Bristol Mini" "mini"
-build_synth "juno" "Bristol Juno" "juno"
-build_synth "prophet" "Prophet-5" "prophet"
-build_synth "obx" "OB-X" "obx"
-build_synth "odyssey" "ARP Odyssey" "odyssey"
-build_synth "jupiter" "Jupiter-8" "jupiter"
-build_synth "pro1" "Pro-One" "pro1"
-build_synth "axxe" "ARP Axxe" "axxe"
-build_synth "poly6" "Poly-6" "poly6"
-build_synth "solina" "Solina" "solina"
-build_synth "rhodes" "Rhodes" "rhodes"
-build_synth "obxa" "OB-Xa" "obxa"
-build_synth "roadrunner" "Roadrunner" "roadrunner"
-build_synth "memmoog" "MemMoog" "memmoog"
-build_synth "bit1" "Bit-1" "bit1"
-build_synth "vox" "Vox" "vox"
-
-# ============================================
-# Create tarballs for release
-# ============================================
+# Build Mini synth
 echo ""
-echo "Creating tarballs..."
-cd dist
-for d in bristol-*/; do
-    name="${d%/}"
-    tar -czvf "${name}-module.tar.gz" "$name/"
+echo "=== Building Mini engine ==="
+${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
+    src/synths/mini/mini_engine.c \
+    src/synths/mini/mini_plugin.cpp \
+    build/bristol_mem_loader.o \
+    -o build/mini-dsp.so \
+    -Isrc/synths/mini \
+    -Isrc/shared \
+    -lm
+
+# Package
+echo "Packaging..."
+cat src/synths/mini/module.json > dist/bristol-mini/module.json
+cat src/synths/mini/ui.js > dist/bristol-mini/ui.js
+cat build/mini-dsp.so > dist/bristol-mini/dsp.so
+chmod +x dist/bristol-mini/dsp.so
+
+# Copy presets
+echo "Copying presets..."
+for f in presets/mini/*.mem; do
+    [ -e "$f" ] && cat "$f" > "dist/bristol-mini/presets/mini/$(basename "$f")"
 done
+
+# Create tarball
+echo ""
+echo "Creating tarball..."
+cd dist
+tar -czvf bristol-mini-module.tar.gz bristol-mini/
 cd ..
 
 echo ""
 echo "=== Build Complete ==="
-echo "Output:"
-ls -d dist/bristol-*/
+echo "Output: dist/bristol-mini/"
 echo ""
 echo "To install on Move:"
 echo "  ./scripts/install.sh"
