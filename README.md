@@ -1,4 +1,4 @@
-# Bristol Mini for Move Anything
+# Bristol Mini for Move Everything
 
 Minimoog-style monophonic synthesizer for Ableton Move, inspired by the [Bristol Synthesizer](https://bristol.sourceforge.net/) by Nick Copeland.
 
@@ -55,3 +55,10 @@ GPL-3.0 - Based on Bristol Synthesizer algorithms.
 - Bristol Synthesizer by Nick Copeland
 - Huovilainen Moog ladder filter algorithm
 - PolyBLEP anti-aliasing technique
+
+## AI Assistance Disclaimer
+
+This module is part of Move Everything and was developed with AI assistance, including Claude, Codex, and other AI assistants.
+
+All architecture, implementation, and release decisions are reviewed by human maintainers.  
+AI-assisted content may still contain errors, so please validate functionality, security, and license compatibility before production use.
