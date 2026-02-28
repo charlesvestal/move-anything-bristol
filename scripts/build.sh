@@ -67,6 +67,7 @@ ${CROSS_PREFIX}g++ -g -O3 -shared -fPIC -std=c++14 \
 # Package
 echo "Packaging..."
 cat src/synths/mini/module.json > dist/bristol-mini/module.json
+[ -f src/help.json ] && cat src/help.json > dist/bristol-mini/help.json
 cat src/synths/mini/ui.js > dist/bristol-mini/ui.js
 cat build/mini-dsp.so > dist/bristol-mini/dsp.so
 chmod +x dist/bristol-mini/dsp.so

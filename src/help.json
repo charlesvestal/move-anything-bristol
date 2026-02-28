@@ -1,0 +1,202 @@
+{
+  "title": "Bristol Mini",
+  "children": [
+    {
+      "title": "Overview",
+      "lines": [
+        "Minimoog-style",
+        "monophonic synth.",
+        "",
+        "3 oscillators with",
+        "6 waveforms each,",
+        "Moog ladder filter,",
+        "dual ADSR envelopes,",
+        "and LFO.",
+        "",
+        "Mono with last-note",
+        "priority and glide.",
+        "",
+        "14 factory presets."
+      ]
+    },
+    {
+      "title": "Controls",
+      "children": [
+        {
+          "title": "Knob Mapping",
+          "lines": [
+            "Knob 1: Cutoff",
+            " Filter frequency",
+            "",
+            "Knob 2: Resonance",
+            " Self-oscillates at",
+            " high values",
+            "",
+            "Knob 3: Env Amount",
+            " Filter envelope",
+            " modulation depth",
+            "",
+            "Knob 4: Attack",
+            "Knob 5: Decay",
+            "Knob 6: Sustain",
+            "Knob 7: Release",
+            " Amp envelope ADSR",
+            "",
+            "Knob 8: LFO Rate"
+          ]
+        },
+        {
+          "title": "Oscillators",
+          "lines": [
+            "3 oscillators, each",
+            "with independent:",
+            "",
+            "Wave: 6 waveforms",
+            " Triangle, Ramp,",
+            " Sawtooth, Square,",
+            " Pulse, Sine",
+            "",
+            "Octave: -2 to +2",
+            " (16' 8' 4' 2' 1')",
+            "",
+            "Detune: +/- 12 cents",
+            " Fine pitch adjust",
+            "",
+            "Level: 0 to 1.0",
+            " Mixer level",
+            " (0 = disabled)",
+            "",
+            "OSC3 can act as LFO",
+            "for pitch or filter",
+            "modulation."
+          ]
+        },
+        {
+          "title": "Filter",
+          "lines": [
+            "4-pole Moog ladder",
+            "lowpass filter.",
+            "",
+            "Cutoff: frequency",
+            "Resonance: feedback",
+            " Self-oscillates at",
+            " very high settings",
+            "",
+            "Env Amount: how much",
+            " the filter envelope",
+            " moves the cutoff",
+            "",
+            "Key Tracking:",
+            " Filter follows",
+            " keyboard pitch",
+            "",
+            "2x oversampled with",
+            "tanh saturation for",
+            "analog-like warmth."
+          ]
+        },
+        {
+          "title": "Envelopes",
+          "lines": [
+            "Two separate ADSR",
+            "envelopes:",
+            "",
+            "Amp Envelope:",
+            " Controls volume",
+            " Attack, Decay,",
+            " Sustain, Release",
+            "",
+            "Filter Envelope:",
+            " Controls cutoff",
+            " F.Attack, F.Decay,",
+            " F.Sustain, F.Release",
+            "",
+            "Filter env depth is",
+            "set by Env Amount."
+          ]
+        },
+        {
+          "title": "LFO & Modulation",
+          "lines": [
+            "LFO (triangle wave):",
+            "",
+            "Rate: 0.1 to 20 Hz",
+            "",
+            "To OSC: vibrato",
+            " depth (pitch mod)",
+            "",
+            "To Filter: wah",
+            " depth (cutoff mod)",
+            "",
+            "Mod Wheel (CC 1):",
+            " Increases vibrato",
+            "",
+            "Glide/Portamento:",
+            " Smooth pitch slide",
+            " between notes",
+            " (CC 5 or menu)"
+          ]
+        },
+        {
+          "title": "Other",
+          "lines": [
+            "Noise: white/pink",
+            " mixed into signal",
+            "",
+            "Volume: master level",
+            "",
+            "Octave: -3 to +3",
+            " transpose",
+            "",
+            "Gain: output level"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "MIDI",
+      "lines": [
+        "Monophonic with",
+        "last-note priority.",
+        "",
+        "Pitch Bend: +/- 2",
+        " semitones",
+        "",
+        "Aftertouch:",
+        " Amplitude control",
+        "",
+        "CC 1: Mod wheel",
+        " (vibrato depth)",
+        "CC 5: Glide time",
+        "CC 71: Resonance",
+        "CC 72: Release",
+        "CC 73: Attack",
+        "CC 74: Filter cutoff",
+        "CC 75: Decay",
+        "CC 76: LFO rate",
+        "CC 79: Sustain level"
+      ]
+    },
+    {
+      "title": "Presets",
+      "lines": [
+        "14 factory presets:",
+        "",
+        " Init",
+        " Classic Lead",
+        " Fat Bass",
+        " Resonant Sweep",
+        " PWM Strings",
+        " Acid Squelch",
+        " Soft Sine",
+        " Detuned Sync",
+        " Mini Brass",
+        " Sub Bass",
+        " Pluck",
+        " Noise Lead",
+        " Growl Bass",
+        " Glide Lead"
+      ]
+    }
+  ]
+}
